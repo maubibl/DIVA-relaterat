@@ -3,7 +3,7 @@ Ett antal script som transformerar XML från Scopus API till DiVA mods.
 Scripten körs lokalt (än så länge) - gör så här:
 
 1) Lägg in eid på poster som ska importeras i import.py
-2) Kolla så mappen SCOPUS är tom (i downloadsfoldern)
+2) Kolla så mappen SCOPUS (i downloadsfoldern) är tom 
 3) Kör scriptet import.py - varje eid blir en post som sparas i mappen SCOPUS under downloads.
 4) Kör scriptet merge_all_xml.py - alla filer i mappen SCOPUS slås samman till en fil med namnet merged.xml (sparas i downloads/ScopusMods).
 5) Kör scriptet transscopus.py - filen scopus_yymmdd.xml skapas och kan importeras (som mods3) i DIVA. 
