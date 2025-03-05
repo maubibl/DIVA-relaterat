@@ -129,6 +129,10 @@
                         <title><xsl:value-of select="substring-before($title, ':')"/></title>
                         <subTitle><xsl:value-of select="substring-after($title, ':')"/></subTitle>
                     </xsl:when>
+                    <xsl:when test="contains($title, '—')">
+                         <title><xsl:value-of select="substring-before($title, '—')"/></title>
+                         <subTitle><xsl:value-of select="substring-after($title, '—')"/></subTitle>
+                    </xsl:when>
                     <xsl:otherwise>
                         <title><xsl:value-of select="$title"/></title>
                     </xsl:otherwise>
