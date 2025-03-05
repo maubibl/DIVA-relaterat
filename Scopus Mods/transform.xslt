@@ -179,100 +179,6 @@
                             </xsl:otherwise>
                         </xsl:choose>  
                     </affiliation>
-        <!--        
-<affiliation>
-                 <xsl:choose>
-                           <xsl:when test="key('authorByAuid', @auid)/ancestor::author-group/affiliation/ns3:source-text">
-                            <xsl:variable name="authorAuid" select="@auid"/>
-                                <xsl:for-each select="../../item/bibrecord/head/author-group[author/@auid = $authorAuid]/affiliation/ns3:source-text">
-                                <xsl:value-of select="."/>
-                                <xsl:if test="position() != last()">
-                                    <xsl:text>; </xsl:text>
-                                </xsl:if>
-                                </xsl:for-each>
-                           </xsl:when>
-                           <xsl:when test="../../item/bibrecord/head/author-group[author/@auid = $authorAuid]/affiliation/organization">
-                            <xsl:variable name="authorAuid" select="@auid"/>
-                                <xsl:for-each select="../../item/bibrecord/head/author-group[author/@auid = $authorAuid]/affiliation">
-                                    <xsl:for-each select="organization">
-                                        <xsl:value-of select="."/>
-                                        <xsl:if test="position() != last()">
-                                        <xsl:text>, </xsl:text>
-                                    /xsl:for-each>
-                                    <xsl:text>, </xsl:text>
-                                    <xsl:<if test="city">
-                                        <xsl:value-of select="city"/>
-                                        <xsl:text>, </xsl:text>
-                                    </xsl:if>
-                                    <xsl:value-of select="country"/>
-                                    <xsl:if test="position() != last()">
-                                        <xsl:text>; </xsl:text>
-                                    </xsl:if>
-                                </xsl:for-each>
-                             </xsl:when>
-                            <xsl:otherwise>
-                            <xsl:for-each select="ns0:affiliation">
-                            <xsl:variable name="affilId" select="@id"/>
-                            <xsl:for-each select="../../../ns0:affiliation[@id = $affilId]">
-                                <xsl:value-of select="ns0:affilname"/>
-                                <xsl:text>, </xsl:text>
-                                <xsl:value-of select="ns0:affiliation-city"/>
-                                <xsl:text>, </xsl:text>
-                                <xsl:value-of select="ns0:affiliation-country"/>
-                                <xsl:if test="position() != last()">
-                                    <xsl:text>; </xsl:text>
-                                </xsl:if>
-                            </xsl:for-each>
-                        </xsl:for-each>
-                           </xsl:otherwise>
-                       </xsl:choose>  
-        </affiliation>
-   
-        <affiliation>
-            <xsl:for-each select="ns0:affiliation">
-                <xsl:variable name="affilId" select="@id"/>
-                <xsl:for-each select="../../../ns0:affiliation[@id = $affilId]">
-                    <xsl:value-of select="ns0:affilname"/>
-                    <xsl:text>, </xsl:text>
-                    <xsl:value-of select="ns0:affiliation-city"/>
-                    <xsl:text>, </xsl:text>
-                    <xsl:value-of select="ns0:affiliation-country"/>
-                    <xsl:if test="position() != last()">
-                        <xsl:text>; </xsl:text>
-                    </xsl:if>
-                </xsl:for-each>
-            </xsl:for-each>
-        </affiliation>
-
-                <affiliation>
-                 <xsl:choose>
-                           <xsl:when test="key('authorByAuid', @auid)/ancestor::author-group/affiliation/ns3:source-text">
-                            <xsl:variable name="authorAuid" select="@auid"/>
-                                <xsl:for-each select="../../item/bibrecord/head/author-group[author/@auid = $authorAuid]/affiliation/ns3:source-text">
-                                <xsl:value-of select="."/>
-                                <xsl:if test="position() != last()">
-                                    <xsl:text>; </xsl:text>
-                                </xsl:if>
-                                </xsl:for-each>
-                           </xsl:when>
-                           <xsl:otherwise>
-                            <xsl:for-each select="ns0:affiliation">
-                            <xsl:variable name="affilId" select="@id"/>
-                            <xsl:for-each select="../../../ns0:affiliation[@id = $affilId]">
-                                <xsl:value-of select="ns0:affilname"/>
-                                <xsl:text>, </xsl:text>
-                                <xsl:value-of select="ns0:affiliation-city"/>
-                                <xsl:text>, </xsl:text>
-                                <xsl:value-of select="ns0:affiliation-country"/>
-                                <xsl:if test="position() != last()">
-                                    <xsl:text>; </xsl:text>
-                                </xsl:if>
-                            </xsl:for-each>
-                        </xsl:for-each>
-                           </xsl:otherwise>
-                       </xsl:choose>
-                    </affiliation>
-                                    -->
                 <xsl:variable name="authorAuid" select="@auid"/>
                 <xsl:variable name="orcid" select="key('authorByAuid', $authorAuid)/@orcid"/>
                 <xsl:if test="$orcid">
@@ -286,6 +192,10 @@
                     <xsl:when test="contains($title, ':')">
                         <title><xsl:value-of select="substring-before($title, ':')"/></title>
                         <subTitle><xsl:value-of select="substring-after($title, ':')"/></subTitle>
+                    </xsl:when>
+                    <xsl:when test="contains($title, '—')">
+                         <title><xsl:value-of select="substring-before($title, '—')"/></title>
+                         <subTitle><xsl:value-of select="substring-after($title, '—')"/></subTitle>
                     </xsl:when>
                     <xsl:otherwise>
                         <title><xsl:value-of select="$title"/></title>
