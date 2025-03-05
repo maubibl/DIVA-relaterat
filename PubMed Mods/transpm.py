@@ -20,14 +20,16 @@ def fetch_xlink_href(abstract, keywords, title):
     if response.status_code == 200:
         result = response.json()
         if 'suggestions' in result and len(result['suggestions']) > 0:
-            return result['suggestions'][0]['code']
+            best_suggestion = max(result['suggestions'], key=lambda x: x['_score'])
+            return best_suggestion['code']
        # Second attempt with level 3 if no suggestions found in the first attempt
     data["level"] = 3
     response = requests.post(url, json=data, headers=headers)
     if response.status_code == 200:
         result = response.json()
         if 'suggestions' in result and len(result['suggestions']) > 0:
-            return result['suggestions'][0]['code']
+            best_suggestion = max(result['suggestions'], key=lambda x: x['_score'])
+            return best_suggestion['code']
     
     raise Exception("No suggestions found in API response")
 
