@@ -135,22 +135,34 @@
                     <affiliation>
                     <xsl:variable name="authorAuid" select="@auid"/>
                         <xsl:choose>
-                           <xsl:when test="key('authorByAuid', @auid)/ancestor::author-group/affiliation/ns3:source-text">
+                        <xsl:when test="key('authorByAuid', @auid)/ancestor::author-group/affiliation/ns3:source-text">
                                 <xsl:for-each select="../../item/bibrecord/head/author-group[author/@auid = $authorAuid]/affiliation/ns3:source-text">
+                                <!-- lägger $$$ framför affiliering om affilieringsid i Scopus matchar MAU:s -->
+                                <xsl:choose>
+                                    <xsl:when test="parent::affiliation/@afid='60007905'or parent::affiliation/@afid='60010975' or parent::affiliation/@afid='60063782'">
+                                        <xsl:text>$$$</xsl:text>
+                                    </xsl:when>
+                                </xsl:choose>
                                 <xsl:value-of select="."/>
                                 <xsl:if test="position() != last()">
                                     <xsl:text>; </xsl:text>
                                 </xsl:if>
                                 </xsl:for-each>
-                           </xsl:when>
-                           <xsl:when test="../../item/bibrecord/head/author-group[author/@auid = $authorAuid]/affiliation/organization">
+                        </xsl:when>
+                        <xsl:when test="../../item/bibrecord/head/author-group[author/@auid = $authorAuid]/affiliation/organization">
                                 <xsl:for-each select="../../item/bibrecord/head/author-group[author/@auid = $authorAuid]/affiliation">
+                                <!-- lägger $$$ framför affiliering om affilieringsid i Scopus matchar MAU:s -->
+                                <xsl:choose>
+                                    <xsl:when test="./@afid='60007905'or ./@afid='60010975' or ./@afid='60063782'">
+                                        <xsl:text>$$$</xsl:text>
+                                    </xsl:when>
+                                </xsl:choose>
                                     <xsl:for-each select="organization">
                                         <xsl:value-of select="."/>
                                         <xsl:if test="position() != last()">
                                         <xsl:text>, </xsl:text>
                                         </xsl:if>
-                                   </xsl:for-each>
+                                </xsl:for-each>
                                     <xsl:text>, </xsl:text>
                                     <xsl:if test="city">
                                         <xsl:value-of select="city"/>
@@ -161,14 +173,19 @@
                                         <xsl:text>; </xsl:text>
                                     </xsl:if>
                                 </xsl:for-each>
-                             </xsl:when>
+                            </xsl:when>
                             <xsl:otherwise>
                             <xsl:for-each select="ns0:affiliation">
                                 <xsl:variable name="affilId" select="@id"/>
                                     <xsl:for-each select="../../../ns0:affiliation[@id = $affilId]">
-                                    <xsl:value-of select="ns0:affilname"/>
+                                    <!-- lägger $$$ framför affiliering om affilieringsid i Scopus matchar MAU:s -->
+                                        <xsl:choose>
+                                            <xsl:when test="./@id='60007905'or ./@id='60010975' or ./@id='60063782'">
+                                                <xsl:text>$$$</xsl:text>
+                                            </xsl:when>
+                                        </xsl:choose><xsl:value-of select="ns0:affilname"/>
                                     <xsl:text>, </xsl:text>
-                                     <xsl:value-of select="ns0:affiliation-city"/>
+                                    <xsl:value-of select="ns0:affiliation-city"/>
                                         <xsl:text>, </xsl:text>
                                         <xsl:value-of select="ns0:affiliation-country"/>
                                         <xsl:if test="position() != last()">
