@@ -1,3 +1,13 @@
+# SCOPUS MODS
+##Uppdatering 20250410
+Scripten import.py, merge_all_xml.py och transscopus.py ersätts av ScopusMods.py som kör hela processen (laddar ner poster från Scopus, slår samman till en fil som transformeras till DIVA mods och klassas med Nationell ämneskategori.
+
+1) Lägg in eid på poster som ska importeras i scriptet ScopusMods
+2) Kolla så foldern SCOPUS (i samma folder som scriptet) är tom
+3) Kör scriptet ScopusMods - filen filen scopus_yymmdd.xml skapas och kan importeras (som mods3) i DIVA, Nationell ämneskategori läggs till om man får träff i Swepubs classify API. 
+
+##20250304
+
 Ett antal script som transformerar XML från Scopus API till DiVA mods.
 
 Scripten körs lokalt (än så länge) - gör så här:
