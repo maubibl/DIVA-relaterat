@@ -1,3 +1,5 @@
+#This script can be replaced by ScopusMods.py, that replaces import.py, merge_all_xml.py and transscopus.py
+
 import sys
 import requests
 from lxml import etree
