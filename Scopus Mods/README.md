@@ -2,9 +2,10 @@
 ## Uppdatering 20250410
 Scripten import.py, merge_all_xml.py och transscopus.py ersätts av ScopusMods.py som kör hela processen (laddar ner poster från Scopus, slår samman till en fil som transformeras till DIVA mods och klassas med Nationell ämneskategori. Scriptet använder transform.xslt och all.xml för att genomföra transformeringen.
 
-1) Lägg in eid på poster som ska importeras i scriptet ScopusMods
-2) Kolla så foldern SCOPUS (i samma folder som scriptet) är tom
-3) Kör scriptet ScopusMods - filen filen scopus_yymmdd.xml skapas och kan importeras (som mods3) i DIVA, Nationell ämneskategori läggs till om man får träff i Swepubs classify API.
+1) Se till att Scopus API nyckel ligger i .env (SCOPUS_API_KEY='YOUR_API_KEY')
+2) Lägg in eid på poster som ska importeras i scriptet ScopusMods
+3) Kolla så foldern SCOPUS (i samma folder som scriptet) är tom
+4)  Kör scriptet ScopusMods - filen filen scopus_yymmdd.xml skapas och kan importeras (som mods3) i DIVA, Nationell ämneskategori läggs till om man får träff i Swepubs classify API.
 
 Att tänka på:
 1) Om affilieringsid matchar Mau i Scopusdatan läggs '$$$' framför affiliering så att Mau forskare ska vara lätta att hitta och koppla i datan.
