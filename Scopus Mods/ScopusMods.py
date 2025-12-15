@@ -16,7 +16,7 @@ if not api_key:
     raise ValueError("API key not found. Please set SCOPUS_API_KEY in your .env file.")
 
 # List of EIDs to fetch
-eids = ['2-s2.0-105000536548', '2-s2.0-86000769007', '2-s2.0-86000772521', '2-s2.0-86000663903', '2-s2.0-105000540966', '2-s2.0-105000034525', '2-s2.0-105000034918', '2-s2.0-105000389895', '2-s2.0-105000494419', '2-s2.0-86000342360', '2-s2.0-105000429323']
+eids = ['2-s2.0-105023304453', '2-s2.0-105022914715', '2-s2.0-105023356866', '2-s2.0-105023453725']
 base_url = 'https://api.elsevier.com/content/abstract/eid/'
 
 # Define the directory to save the files
@@ -25,10 +25,20 @@ save_dir = os.path.join(os.path.dirname(__file__), 'SCOPUS')
 # Create the directory if it doesn't exist
 os.makedirs(save_dir, exist_ok=True)
 
+# Step 0: Delete all files in the SCOPUS folder
+print("Cleaning up SCOPUS folder...")
+for filename in os.listdir(save_dir):
+    file_path = os.path.join(save_dir, filename)
+    try:
+        if os.path.isfile(file_path):
+            os.unlink(file_path)  # Remove the file
+    except Exception as e:
+        print(f"Failed to delete {file_path}: {e}")
+
 # Step 1: Fetch records from Scopus API
 print("Fetching records from Scopus API...")
 for eid in eids:
-    url = f"{base_url}{eid}?apiKey={api_key}"
+    url = f"{base_url}{eid}?apiKey={api_key}&view=FULL"
     response = requests.get(url, headers={'Accept': 'application/xml'})
     if response.status_code == 200:
         # Save the response to a file

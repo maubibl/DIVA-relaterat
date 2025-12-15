@@ -4,13 +4,13 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns="http://www.loc.gov/mods/v3"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xocs="http://www.elsevier.com/xml/xocs/dtd"
     xmlns:ns0="http://www.elsevier.com/xml/svapi/abstract/dtd"
     xmlns:ns1="http://prismstandard.org/namespaces/basic/2.0/"
     xmlns:ns3="http://www.elsevier.com/xml/ani/common"
     xmlns:ns4="http://www.elsevier.com/xml/ani/ait"
-    xmlns:ns5="http://www.elsevier.com/xml/xocs/dtd"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
-    exclude-result-prefixes="ns0 ns1 ns3 ns4 ns5">
+    exclude-result-prefixes="ns0 ns1 ns3 ns4">
     
     <xsl:output method="xml" indent="yes" encoding="UTF-8" omit-xml-declaration="no"/>
 
@@ -31,7 +31,8 @@
     <xsl:template match="record">
         <mods version="3.7" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-7.xsd">
             <xsl:variable name="countryAbbr" select="translate(ns0:abstracts-retrieval-response/item/bibrecord/head/source/additional-srcinfo/conferenceinfo/confevent/conflocation/@country, $lowercase, $uppercase)"/>
-            <xsl:variable name="countryName" select="document('/Users/ah3264/Downloads/ScopusMods/all.xml')/countries/country[@alpha-3 = $countryAbbr]/@name"/>
+            <xsl:variable name="countryName" select="document('all.xml')/countries/country[@alpha-3 = $countryAbbr]/@name"/>
+            <xsl:variable name="langCode" select="ns0:abstracts-retrieval-response/ns0:language/@xml:lang"/>
         <xsl:choose>
             <xsl:when test="ns0:abstracts-retrieval-response/ns0:coredata/ns0:subtypeDescription = 'Conference Paper'">
             <genre authority="diva" type="contentTypeCode">refereed</genre>
@@ -132,78 +133,25 @@
                     <role>
                         <roleTerm type="code" authority="marcrelator">aut</roleTerm>
                     </role>
-                    <affiliation>
+                    <xsl:call-template name="emit-affiliation">
+                        <xsl:with-param name="auid" select="@auid"/>
+                    </xsl:call-template>
                     <xsl:variable name="authorAuid" select="@auid"/>
-                        <xsl:choose>
-                        <xsl:when test="key('authorByAuid', @auid)/ancestor::author-group/affiliation/ns3:source-text">
-                                <xsl:for-each select="../../item/bibrecord/head/author-group[author/@auid = $authorAuid]/affiliation/ns3:source-text">
-                                <!-- lägger $$$ framför affiliering om affilieringsid i Scopus matchar MAU:s -->
-                                <xsl:choose>
-                                    <xsl:when test="parent::affiliation/@afid='60007905'or parent::affiliation/@afid='60010975' or parent::affiliation/@afid='60063782'">
-                                        <xsl:text>$$$</xsl:text>
-                                    </xsl:when>
-                                </xsl:choose>
-                                <xsl:value-of select="."/>
-                                <xsl:if test="position() != last()">
-                                    <xsl:text>; </xsl:text>
-                                </xsl:if>
-                                </xsl:for-each>
-                        </xsl:when>
-                        <xsl:when test="../../item/bibrecord/head/author-group[author/@auid = $authorAuid]/affiliation/organization">
-                                <xsl:for-each select="../../item/bibrecord/head/author-group[author/@auid = $authorAuid]/affiliation">
-                                <!-- lägger $$$ framför affiliering om affilieringsid i Scopus matchar MAU:s -->
-                                <xsl:choose>
-                                    <xsl:when test="./@afid='60007905'or ./@afid='60010975' or ./@afid='60063782'">
-                                        <xsl:text>$$$</xsl:text>
-                                    </xsl:when>
-                                </xsl:choose>
-                                    <xsl:for-each select="organization">
-                                        <xsl:value-of select="."/>
-                                        <xsl:if test="position() != last()">
-                                        <xsl:text>, </xsl:text>
-                                        </xsl:if>
-                                </xsl:for-each>
-                                    <xsl:text>, </xsl:text>
-                                    <xsl:if test="city">
-                                        <xsl:value-of select="city"/>
-                                        <xsl:text>, </xsl:text>
-                                    </xsl:if>
-                                    <xsl:value-of select="country"/>
-                                    <xsl:if test="position() != last()">
-                                        <xsl:text>; </xsl:text>
-                                    </xsl:if>
-                                </xsl:for-each>
-                            </xsl:when>
-                            <xsl:otherwise>
-                            <xsl:for-each select="ns0:affiliation">
-                                <xsl:variable name="affilId" select="@id"/>
-                                    <xsl:for-each select="../../../ns0:affiliation[@id = $affilId]">
-                                    <!-- lägger $$$ framför affiliering om affilieringsid i Scopus matchar MAU:s -->
-                                        <xsl:choose>
-                                            <xsl:when test="./@id='60007905'or ./@id='60010975' or ./@id='60063782'">
-                                                <xsl:text>$$$</xsl:text>
-                                            </xsl:when>
-                                        </xsl:choose><xsl:value-of select="ns0:affilname"/>
-                                    <xsl:text>, </xsl:text>
-                                    <xsl:value-of select="ns0:affiliation-city"/>
-                                        <xsl:text>, </xsl:text>
-                                        <xsl:value-of select="ns0:affiliation-country"/>
-                                        <xsl:if test="position() != last()">
-                                            <xsl:text>; </xsl:text>
-                                        </xsl:if>
-                                    </xsl:for-each>
-                                </xsl:for-each>
-                            </xsl:otherwise>
-                        </xsl:choose>  
-                    </affiliation>
-                <xsl:variable name="authorAuid" select="@auid"/>
-                <xsl:variable name="orcid" select="key('authorByAuid', $authorAuid)/@orcid"/>
-                <xsl:if test="$orcid">
-                    <description>orcid.org=<xsl:value-of select="$orcid"/></description>
-                </xsl:if>
+                    <xsl:variable name="orcid" select="key('authorByAuid', $authorAuid)/@orcid"/>
+                    <xsl:if test="$orcid">
+                        <description>orcid.org=<xsl:value-of select="$orcid"/></description>
+                    </xsl:if>
                 </name>
             </xsl:for-each>
-            <titleInfo lang="eng">
+            <titleInfo>
+                <xsl:attribute name="lang">
+                    <xsl:choose>
+                        <xsl:when test="normalize-space($langCode)">
+                            <xsl:value-of select="normalize-space($langCode)"/>
+                        </xsl:when>
+                        <xsl:otherwise>eng</xsl:otherwise>
+                    </xsl:choose>
+                </xsl:attribute>
                 <xsl:variable name="title" select="ns0:abstracts-retrieval-response/ns0:coredata/dc:title"/>
                 <xsl:choose>
                     <xsl:when test="contains($title, ':')">
@@ -220,7 +168,14 @@
                 </xsl:choose>
             </titleInfo>
             <language>
-                <languageTerm type="code" authority="iso639-2b">eng</languageTerm>
+                <languageTerm type="code" authority="iso639-2b">
+                    <xsl:choose>
+                        <xsl:when test="normalize-space($langCode)">
+                            <xsl:value-of select="normalize-space($langCode)"/>
+                        </xsl:when>
+                        <xsl:otherwise>eng</xsl:otherwise>
+                    </xsl:choose>
+                </languageTerm>
             </language>
             <originInfo>
                 <publisher><xsl:value-of select="ns0:abstracts-retrieval-response/item/bibrecord/head/source/publisher/publishername"/></publisher>
@@ -280,7 +235,21 @@
                 <topic><xsl:value-of select="."/></topic>
             </xsl:for-each>
             </subject>
-            <abstract><xsl:value-of select="ns0:abstracts-retrieval-response/ns0:coredata/dc:description/abstract/ns3:para"/></abstract>
+            <xsl:variable name="abstractLang" select="ns0:abstracts-retrieval-response/ns0:coredata/dc:description/abstract/@xml:lang"/>
+            <abstract>
+                <xsl:attribute name="lang">
+                    <xsl:choose>
+                        <xsl:when test="normalize-space($abstractLang)">
+                            <xsl:value-of select="normalize-space($abstractLang)"/>
+                        </xsl:when>
+                        <xsl:when test="normalize-space($langCode)">
+                            <xsl:value-of select="normalize-space($langCode)"/>
+                        </xsl:when>
+                        <xsl:otherwise>eng</xsl:otherwise>
+                    </xsl:choose>
+                </xsl:attribute>
+                <xsl:value-of select="ns0:abstracts-retrieval-response/ns0:coredata/dc:description/abstract/ns3:para"/>
+            </abstract>
             <xsl:if test="ns0:abstracts-retrieval-response/ns0:coredata/ns0:subtypeDescription != 'Book'">
                 <relatedItem type="host">
                     <titleInfo>
@@ -315,6 +284,11 @@
             <xsl:if test="ns0:abstracts-retrieval-response/ns0:coredata/ns1:aggregationType = 'Journal' and not(ns0:abstracts-retrieval-response/ns0:coredata/ns1:volume) and not(ns0:abstracts-retrieval-response/ns0:coredata/ns1:issueIdentifier)">
                 <note type="publicationStatus" lang="eng">Epub ahead of print</note>
             </xsl:if>
+            <xsl:for-each select="ns0:abstracts-retrieval-response/item/xocs:meta/xocs:funding-list/xocs:funding">
+                <note type="funder">
+                      <xsl:value-of select="xocs:funding-agency"/>
+                </note>   
+            </xsl:for-each>    
             <xsl:if test="ns0:abstracts-retrieval-response/item/bibrecord/head/source/additional-srcinfo/conferenceinfo">
                 <name type="conference">
                     <namePart><xsl:choose>
@@ -389,5 +363,89 @@
              By doing so, it ensures that any elements or attributes not explicitly handled by other templates
              will be ignored and not included in the output. This is useful for filtering out unwanted data
              and keeping the output clean and focused on the desired elements. -->
+    </xsl:template>
+
+    <xsl:template name="emit-affiliation">
+        <xsl:param name="auid" select="''"/>
+
+        <!-- Find all author-groups for this author -->
+        <xsl:variable name="authorGroups" select="//author-group[author/@auid = $auid]"/>
+        
+        <xsl:choose>
+            <!-- 1) Check if any author-group has source-text -->
+            <xsl:when test="$authorGroups/affiliation/ns3:source-text[normalize-space()]">
+                <affiliation>
+                    <xsl:for-each select="$authorGroups/affiliation/ns3:source-text[normalize-space()]">
+                        <xsl:variable name="afid" select="parent::affiliation/@afid"/>
+                        <xsl:if test="$afid='60007905' or $afid='60010975' or $afid='60063782'">
+                            <xsl:text>$$$ </xsl:text>
+                        </xsl:if>
+                        <xsl:value-of select="normalize-space(.)"/>
+                        <xsl:if test="position() != last()">
+                            <xsl:text>; </xsl:text>
+                        </xsl:if>
+                    </xsl:for-each>
+                </affiliation>
+            </xsl:when>
+            
+            <!-- 2) Check if any author-group has organization structure -->
+            <xsl:when test="$authorGroups/affiliation/organization">
+                <affiliation>
+                    <xsl:for-each select="$authorGroups/affiliation">
+                        <xsl:if test="./@afid='60007905' or ./@afid='60010975' or ./@afid='60063782'">
+                            <xsl:text>$$$ </xsl:text>
+                        </xsl:if>
+                        <xsl:for-each select="organization">
+                            <xsl:value-of select="normalize-space(.)"/>
+                            <xsl:if test="position() != last()">
+                                <xsl:text>, </xsl:text>
+                            </xsl:if>
+                        </xsl:for-each>
+                        <xsl:if test="city or country">
+                            <xsl:text>, </xsl:text>
+                            <xsl:if test="city">
+                                <xsl:value-of select="normalize-space(city)"/>
+                                <xsl:if test="country"><xsl:text>, </xsl:text></xsl:if>
+                            </xsl:if>
+                            <xsl:if test="country">
+                                <xsl:value-of select="normalize-space(country)"/>
+                            </xsl:if>
+                        </xsl:if>
+                        <xsl:if test="position() != last()">
+                            <xsl:text>; </xsl:text>
+                        </xsl:if>
+                    </xsl:for-each>
+                </affiliation>
+            </xsl:when>
+            
+            <!-- 3) Fallback: use ns0:affiliation elements from the author node -->
+            <xsl:when test="//ns0:author[@auid=$auid]/ns0:affiliation">
+                <affiliation>
+                    <xsl:for-each select="//ns0:author[@auid=$auid]/ns0:affiliation">
+                        <xsl:variable name="affilId" select="@id"/>
+                        <xsl:variable name="topAffil" select="/records/record/ns0:abstracts-retrieval-response/ns0:affiliation[@id = $affilId]"/>
+                        <xsl:if test="$topAffil/@id='60007905' or $topAffil/@id='60010975' or $topAffil/@id='60063782'">
+                            <xsl:text>$$$ </xsl:text>
+                        </xsl:if>
+                        <xsl:value-of select="normalize-space($topAffil/ns0:affilname)"/>
+                        <xsl:if test="normalize-space($topAffil/ns0:affiliation-city)">
+                            <xsl:text>, </xsl:text>
+                            <xsl:value-of select="normalize-space($topAffil/ns0:affiliation-city)"/>
+                        </xsl:if>
+                        <xsl:if test="normalize-space($topAffil/ns0:affiliation-country)">
+                            <xsl:text>, </xsl:text>
+                            <xsl:value-of select="normalize-space($topAffil/ns0:affiliation-country)"/>
+                        </xsl:if>
+                        <xsl:if test="position() != last()">
+                            <xsl:text>; </xsl:text>
+                        </xsl:if>
+                    </xsl:for-each>
+                </affiliation>
+            </xsl:when>
+            
+            <xsl:otherwise>
+                <affiliation/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 </xsl:stylesheet>
