@@ -3,6 +3,19 @@ import requests
 from lxml import etree
 from datetime import datetime
 
+pubmed_ids = ["41352048","41341817","41339970","41335481","41334599","41293586"]  # <-- Replace with your IDs
+
+def fetch_pubmed_xml(pubmed_ids):
+    url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
+    params = {
+        "db": "pubmed",
+        "id": ",".join(pubmed_ids),
+        "retmode": "xml"
+    }
+    response = requests.get(url, params=params)
+    response.raise_for_status()
+    return etree.fromstring(response.content)
+
 def fetch_xlink_href(abstract, keywords, title):
     url = "https://bibliometri.swepub.kb.se/api/v1/classify"
     headers = {
@@ -28,13 +41,13 @@ def fetch_xlink_href(abstract, keywords, title):
     if response.status_code == 200:
         result = response.json()
         if 'suggestions' in result and len(result['suggestions']) > 0:
-            best_suggestion = max(result['suggestions'], key=lambda x: x['_score'])
-            return best_suggestion['code']
+            return result['suggestions'][0]['code']
     
     raise Exception("No suggestions found in API response")
 
-# Load the XML and XSLT files
-xml = etree.parse('efetch.fcgi.xml')
+xml = fetch_pubmed_xml(pubmed_ids)
+
+# Load the XSLT file
 xslt = etree.parse('pmtrans.xslt')
 
 # Apply the transformation
@@ -62,7 +75,6 @@ for record in transformed_xml.xpath('//mods:mods', namespaces={'mods': 'http://w
         subject_element = etree.Element("{http://www.loc.gov/mods/v3}subject", lang="eng", authority="hsv")
         subject_element.set("{http://www.w3.org/1999/xlink}href", xlink_href)
         record.append(subject_element)
-        print(f"xlink:href: {xlink_href}")
     except Exception as e:
         print(f"Error fetching xlink:href for record: {etree.tostring(record, pretty_print=True, encoding='unicode')}", file=sys.stderr)
         print(e, file=sys.stderr)
