@@ -1,4 +1,8 @@
 # SCOPUS MODS
+
+## Uppdatering 20251215
+Uppdaterade script men förbättrad affilieringsfunktionalitet, dynamisk språkhantering och funktion som automatiskt tömmer foldern Scopus innan nya poster laddas ner. 
+
 ## Uppdatering 20250410
 Scripten import.py, merge_all_xml.py och transscopus.py ersätts av ScopusMods.py som kör hela processen (laddar ner poster från Scopus, slår samman till en fil som transformeras till DIVA mods och klassas med Nationell ämneskategori. Scriptet använder transform.xslt och all.xml för att genomföra transformeringen.
 
