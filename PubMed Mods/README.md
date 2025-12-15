@@ -1,4 +1,9 @@
-Script som omvandlar Pubmed XML till DiVA mods:
+#Uppdatering 2025-12-15
+Uppdaterat så script hämtar xml via API. Skriv in pubmed id på posterna som ska omvandlas efter 
+pubmed_ids = längst upp i scriptet. 
+
+
+#Script som omvandlar Pubmed XML till DiVA mods:
 Tillskillnad från Pubmed importen får man med affilieringsinfo, abstract, och Nationell ämneskategori (om man får träff i Swepubs classify API).  
 
 Hämta Pubmed XML genom att gå till https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=[PMID1],[PMID2],[PMID3]&retmode=xml.
