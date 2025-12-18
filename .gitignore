@@ -1,3 +1,8 @@
 .env
 .atom8n/
 .vscode/
+.DS_Store
+SCOPUS/
+merged.xml
+temp.xml
+scopus_*.xml
